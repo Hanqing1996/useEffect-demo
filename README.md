@@ -10,6 +10,6 @@
 ```
 App()->virtual DOM->DOM树->浏览器渲染节点（render）
 ```
-* useEffect：afterRender，在 render 之后执行
+* useEffect：afterRender，在 render 之后执行（就是 mounted 嘛，只在第一次 render 后触发 useEffect,之后 render 不触发 useEffect）
 * useLayoutEffect:beforeRender,在 render 之前执行 
 * 优先使用 useEffect（优先渲染，让用户尽快看到渲染好的页面，提升用户体验）
