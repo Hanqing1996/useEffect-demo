@@ -13,3 +13,88 @@ App()->virtual DOM->DOM树->浏览器渲染节点（render）
 * useEffect：afterRender，在 render 之后执行（就是 mounted 嘛，只在第一次 render 后触发 useEffect,之后 render 不触发 useEffect）
 * useLayoutEffect:beforeRender,在 render 之前执行 
 * 优先使用 useEffect（优先渲染，让用户尽快看到渲染好的页面，提升用户体验）
+
+---
+```
+import React, { useState, useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  console.log(`${count} is count`);
+  const [delay, setDelay] = useState(1000);
+
+  useInterval(() => {
+    // Your custom logic here
+    console.log(`in callback, count is ${count}`);
+    setCount(count + 1);
+  }, delay);
+
+  function handleDelayChange(e) {
+    setDelay(Number(e.target.value));
+  }
+
+  return (
+    <>
+      <h1>{count}</h1>
+      <input value={delay} onChange={handleDelayChange} />
+    </>
+  );
+}
+
+function useInterval(callback, delay) {
+  // const savedCallback = useRef();
+
+  // savedCallback.current = callback;
+
+  // Remember the latest function.
+  // useEffect(() => {
+  //   savedCallback.current = callback;
+  // }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    console.log("delay change");
+    function tick() {
+      callback();
+    }
+    if (delay !== null) {
+      console.log("setId");
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(<Counter />, rootElement);
+
+/**
+ * const count=0,callback 始终只能访问这个 count
+ * 执行 useInterval
+ * let callback=()=>{...};let delay=1000
+ * function tick(){...}
+ * id=setInterval(tick, delay);
+ *
+ * 1s到了，执行 tick
+ * 执行 callback
+ * 执行 setCount
+ * const count=1
+ * 执行 useInterval
+ * let callback=()=>{...};let delay=1000
+ * 
+ * 2s到了，执行tick
+ * 执行 callback
+ * 执行 setCount
+ * const count=1
+ * 
+ * 3s到了，执行tick
+ * 执行 callback
+ * 执行 setCount
+ * const count=1
+ * 
+ * ...
+ *
+ */
+```
