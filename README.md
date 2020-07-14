@@ -175,3 +175,47 @@ ReactDOM.render(<Counter />, rootElement);
  */
 
 ```
+```
+import React, { useState, useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
+
+function Counter() {
+  const [count, setCount] = useState(0);
+  let num = 0;
+  console.log(`render-num:${num}`);
+  useEffect(() => {
+    const id = setInterval(() => {
+      // 通过 num 来给 count 提供值
+      console.log(num);
+      setCount(++num);
+    }, 1000);
+  }, []);
+
+  return <h1>{count}</h1>;
+}
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(<Counter />, rootElement);
+
+/**
+ * const count=0
+ * let num=0 // A1
+ * id=setInterval(()=>{...},1000)
+ * 
+ * 1s到了，运行()=>{console.log(num);setCount(++num)} // 这里访问A1处的变量num
+ * num=1 // A1处的变量num值变为1
+ * const count=1
+ * let num=0
+ * 
+ * 2s到了，运行()=>{console.log(num);setCount(++num)} // 这里访问A1处的变量num
+ * num=2 // A1处的变量num值变为2
+ * const count=2
+ * let num=0
+ * 
+ * 3s到了，运行()=>{console.log(num);setCount(++num)} // 这里访问A1处的变量num
+ * num=3 // A1处的变量num值变为3
+ * const count=3
+ * let num=0
+ * ...
+ */
+```
